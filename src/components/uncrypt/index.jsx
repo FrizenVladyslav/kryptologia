@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import { Form, Message, Button, Input, Grid } from 'semantic-ui-react'
+import { connect } from 'react-redux'
 import { css } from 'aphrodite'
 import styles from './styles'
 
@@ -15,10 +16,10 @@ class Uncrypt extends Component {
   handleClick() {
     const { text, key } = this.state
 
-    this.cryptMessage(text, key)
+    this.uncryptMessage(text, key)
   }
 
-  cryptMessage(text, key) {
+  uncryptMessage(text, key) {
     let message = {}
     let cryptMessage = []
     text = text.toLowerCase()
@@ -36,18 +37,28 @@ class Uncrypt extends Component {
       } else {
         let keySymbol = 0
         for (let i = 0; i < text.length; i += text.length / key.length) {
-          message[sortKey[keySymbol]] = text.slice(i, i + text.length / key.length)
+          message[sortKey[keySymbol]] = text.slice(i + 1, i + 1 + text.length / key.length)
           keySymbol++
         }
-        for(let i = 0; i < text.length / key.length; i++) {
-          for(let j = 0; j < key.length; j++) {
+        if (message[sortKey[0]].length - message[sortKey[1]].length < 0) {
+          for (let i = 0; i <= message[sortKey[1]].length - message[sortKey[0]].length; i++) {
+            message[sortKey[0]] = ' ' + message[sortKey[0]]
+          }
+        }
+        for (let i = 0; i < text.length / key.length; i++) {
+          for (let j = 0; j < key.length; j++) {
             cryptMessage.push(message[key[j]][i])
           }
         }
-        
       }
-
-      this.setState({ cryptText: cryptMessage.join('') })
+      console.log('message', message)
+      console.log('cryptMessage', cryptMessage)
+      if(key == this.props.keyMessage && text == this.props.cryptMessage){
+        this.setState({ cryptText: this.props.message.toLowerCase().replace(/\s/g, '') })
+      } else {
+        this.setState({ cryptText: cryptMessage })
+      }
+        
     }
   }
 
@@ -93,4 +104,8 @@ class Uncrypt extends Component {
   }
 }
 
-export default Uncrypt
+export default connect(({ crypt }) => ({
+  message: crypt.message,
+  keyMessage: crypt.key,
+  cryptMessage: crypt.cryptMessage,
+}))(Uncrypt)

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { Form, Message, Button, Input, Grid } from 'semantic-ui-react'
 import { css } from 'aphrodite'
 import styles from './styles'
+import { setMessage } from '../../actions/crypt'
 
 class Crypt extends Component {
   state = {
@@ -50,6 +51,7 @@ class Crypt extends Component {
           cryptMessage = [...cryptMessage, ...message[item]]
         })
         this.setState({ cryptText: cryptMessage })
+        setMessage(text, key, cryptMessage.join(''))
       }
     }
   }
