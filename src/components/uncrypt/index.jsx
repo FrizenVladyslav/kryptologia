@@ -13,41 +13,24 @@ class Uncrypt extends Component {
   }
 
   handleClick() {
-    const { text, key } = this.state
+    const { text } = this.state
 
-    this.cryptMessage(text, key)
+    this.uncryptMessage(text)
   }
 
-  cryptMessage(text, key) {
-    let message = {}
-    let cryptMessage = []
-    text = text.toLowerCase()
-    key = key.toLowerCase()
-    let sortKey = key.split('').sort()
+  uncryptMessage(text) {
+    let cryptText = '';
 
-    this.setState({ error: '' })
-
-    if (text.trim().length == 0 || key.trim().length == 0) {
-      if (text.trim().length == 0) this.setState({ error: 'Введiть повiдомлення' })
-      if (key.trim().length == 0) this.setState({ error: 'Введiть ключ' })
+    if (!text.trim()) {
+      this.setState({ error: 'Уведіть повідомлення' })
     } else {
-      if (text.trim().length < key.trim().length) {
-        this.setState({ error: 'Повiдомлення повине бути бiльше за ключ' })
-      } else {
-        let keySymbol = 0
-        for (let i = 0; i < text.length; i += text.length / key.length) {
-          message[sortKey[keySymbol]] = text.slice(i, i + text.length / key.length)
-          keySymbol++
-        }
-        for(let i = 0; i < text.length / key.length; i++) {
-          for(let j = 0; j < key.length; j++) {
-            cryptMessage.push(message[key[j]][i])
-          }
-        }
-        
+      for (let i = 0; i < (text.length / 8); i++) {
+        let word = text.substr(i * 8, 8);
+        word = parseInt(word, 2);
+        cryptText += String.fromCharCode(word);
       }
 
-      this.setState({ cryptText: cryptMessage.join('') })
+      this.setState({ cryptText })
     }
   }
 
@@ -59,8 +42,6 @@ class Uncrypt extends Component {
             <Grid.Column computer={12}>
               <Form>
                 <Form.Field>
-                  <label className={css(styles.label)}>Ключ шифрування</label>
-                  <Input placeholder='Ключ' onChange={({ target }) => this.setState({ key: target.value })} />
                   <label className={css(styles.label)}>Повiдомлення яке потрiбно розшифрувати</label>
                   <Form.TextArea placeholder='Повiдомлення' onChange={({ target }) => this.setState({ text: target.value })} />
                 </Form.Field>

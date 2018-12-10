@@ -14,7 +14,7 @@ class App extends Component {
 
     return (
       <>
-        <Header title='ШИФРИ ПЕРЕСТАНОВКИ' number={2} />
+        <Header title='ГАМУВАННЯ' number={3} />
         <Container>
           <Tab menu={{ pointing: true }} panes={panes} />
         </Container>
