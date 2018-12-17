@@ -11,7 +11,7 @@ const PageHeader = ({ number, title }) => {
         <Header.Content >
           Прикладна криптологія
           <Header.Subheader>Лабораторна робота N {number} - {title}</Header.Subheader>
-          <Header.Subheader>Фрiзен Владислав</Header.Subheader>
+          <Header.Subheader>Фрiзен Владислав, Анатолій Байрак, Обэдін Денис</Header.Subheader>
         </Header.Content >
       </Header>
       

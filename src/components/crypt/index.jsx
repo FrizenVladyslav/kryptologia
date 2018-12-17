@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { Form, Message, Button, Input, Grid } from 'semantic-ui-react'
 import { css } from 'aphrodite'
 import styles from './styles'
+import { setMessage } from '../../actions/setMessage'
 
 class Crypt extends Component {
   state = {
@@ -13,12 +14,13 @@ class Crypt extends Component {
   }
 
   handleClick() {
-    const { text } = this.state
+    const { text, key } = this.state
 
-    this.cryptMessage(text)
+    this.cryptMessage(text, key)
   }
 
-  cryptMessage(text) {
+  cryptMessage(text, key) {
+    let gammaIndex = 0
     this.setState({ error: '' })
     text = text.replace(/\s/g, '')
 
@@ -27,9 +29,26 @@ class Crypt extends Component {
     } else {
       let cryptText = text.split('').map(char => {
         return char.charCodeAt(0).toString(2);
-      }).join(' ');
+      })
 
-      this.setState({ cryptText })
+      let gamma = key.split('').map(char => {
+        return char.charCodeAt(0).toString(2)
+      })
+      let newCrypt = cryptText.map(char => {
+        let newBynar = []
+        char.split('').forEach(c => {
+          gammaIndex++
+          if (gammaIndex === key.length - 1) gammaIndex = 0
+          if (c == 0 && gamma[gammaIndex][gammaIndex] == 0) newBynar.push(0)
+          if (c == 1 && gamma[gammaIndex][gammaIndex] == 1) newBynar.push(0)
+          if (c == 0 && gamma[gammaIndex][gammaIndex] == 1) newBynar.push(1)
+          if (c == 1 && gamma[gammaIndex][gammaIndex] == 0) newBynar.push(1)
+        })
+        return newBynar.join('')
+      })
+
+      setMessage(text, key, newCrypt.join(' '))
+      this.setState({ cryptText: newCrypt.join(' ') })
     }
   }
 
@@ -40,6 +59,10 @@ class Crypt extends Component {
           <Grid.Row>
             <Grid.Column computer={12}>
               <Form>
+                <Form.Field>
+                  <label className={css(styles.label)}>Гамма</label>
+                  <Form.Input placeholder='Гамма' onChange={({ target }) => this.setState({ key: target.value })} />
+                </Form.Field>
                 <Form.Field>
                   <label className={css(styles.label)}>Повiдомлення яке потрiбно зашифрувати</label>
                   <Form.TextArea placeholder='Повiдомлення' onChange={({ target }) => this.setState({ text: target.value })} />
